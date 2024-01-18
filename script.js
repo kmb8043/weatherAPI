@@ -1,23 +1,27 @@
-var weatherAPIkey = '4ddbaa190fc883f9a34a66a689a819db';
+var APIkey = '4ddbaa190fc883f9a34a66a689a819db';
 
-var cityInput = $('city_input');
-var searchbtn = $('search-btn');
-var clearbtn = $('clear_btn');
-var pastsearch = $('prevSearches');
+// city search bar //
+var cityInput = $('#city_input');
 
-var currentCity;
+// action buttons //
+var searchbtn = $('#search-btn');
+var clearbtn = $('#clear_btn');
+var pastsearch = $('#prevSearches');
 
-function getWeather(data){
-  var weatherURL = 'https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lon}&exclude=minutely,hourly,alerts&units=metric&appid=${APIkey}';
+
+var currentCity = '';
+
+function getWeather(){
+  var weatherURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lon}&exclude=minutely,hourly,alerts&units=metric&appid=${APIkey}`;
     fetch(weatherURL)
       .then(function(response){
         return response.json();
 })
       .then(function(data){
-
+    
   // current weather //
-    var currentWeather = $('currentForecast');
-    currentWeather.addclass('border border-primary');
+    var currentWeather = $('#currentWeather');
+    currentWeather.addClass('border border-primary');
 
   // city name //
     var cityName = $('<h2>');
@@ -27,7 +31,7 @@ function getWeather(data){
 
 // current date //
     var currentDate = data.current.dt;
-    currentDate = mement.unix(currentDate).format('MM/DD/YYYY');
+    currentDate = moment.unix(currentDate).format('MM/DD/YYYY');
 
     var date = $('<div>');
     date.text(`(${currentDate})`);
@@ -35,43 +39,44 @@ function getWeather(data){
 
 // current temperature //
     var cityTemp = data.current.temp;
-    var currentTemp = $('<div>')
+    var currentTemp = $('<div>');
     
-    currentTemp.text(`Temperature : $(currentCityTemp)`);
-    currentForecast.append(currentTemp);
+    currentTemp.text(`Temperature: ${cityTemp}`);
+    currentWeather.append(cityTemp);
 
 // current wind //
     var currentWind = data.current.wind_speed;
-    var WindEl = $('div');
+    var windEl = $('<div>');
 
-    WindEl.text(`wind : ${cityWind}`);
-    currentForecast.append(currentWind);
+
+    windEl.text(`wind : ${currentWind}`);
+    currentWeather.append(windEl);
 
 // current humidity //
     var currentHumidity = data.current.humidity;
-    var humidity = $('<div');
+    var humidity = $('<div>');
 
-    humidity.text(`Humidity : ${currentHumidity}`);
-    currentForecast.append(currentHumidity);
+    humidity.text(`Humidity : ${currentHumidity}%`);
+    currentWeather.append(humidity);
 
 
 // 5 day forecast //
-    var fiveDayHeader = $('5dayheader');
+    var fiveDayHeader = $('#5dayheader');
     var fiveDayEl = $('<h2>');
 
-    fiveDayEl.text (' 5 Day Forecast : ');
+    fiveDayEl.text('5 Day Forecast:');
     fiveDayHeader.append(fiveDayEl);
 
     fiveDayForecast = $('#fiveDayForecast');
 
-    for (let index = 1; index <= 5; index++){
+    for (let i = 1; i <= 5; i++) {
       var day;
       var temp;
       var wind;
       var humidity;
 
-      date = data.daily[i].dt;
-      date = moment.unix(date).format('MM/DD/YYYY');
+      day = data.daily[i].dt;
+      day = moment.unix(date).format('MM/DD/YYYY');
 
       temp = data.daily[i].temp.day;
       wind = data.daily[i].wind_speed;
@@ -82,7 +87,7 @@ function getWeather(data){
     card.classList.add('card' , 'col-2' , 'm-1' , 'bg-primary' , 'text-white');
 
 // card body to append //
-    var cardbody = doctument.createElement('div');
+    var cardbody = document.createElement('div');
     cardbody.classList.add('card-body');
     cardbody.innerHTML = `<h4> ${day} <h4>
                           ${temp} *F <br>
@@ -102,9 +107,9 @@ function searchHistory(){
   var savedcities = JSON.parse(localStorage.getItem('cities')) || [];
   var prevCities = document.getElementById('prevSEarches');
 
-  prevCities.innerHTML = '';
+//  prevCities.innerHTML = '';
 
-  for (index = 0 ; index < savedcities.length ; 1++){
+for (let i = 0; i < savedcities.length; i++){
     var citybtn = document.createElement('button');
     citybtn.classList.add('btn', 'btn-primary', 'my-2', 'pastcity');
     citybtn.setAttribute('style', 'width:100%');
@@ -148,17 +153,18 @@ function searchHistory(){
         return;
 
 // submit city //
-        function CityFormSubmit (event) {
-          event.preventDefault();
-          currentCity = cityInputEl.val().trim();
-      
-          getCoordinates();
-      return;
-        }
-      
+        function submitCity(event){
+         event.preventDefault();
+          currentCity = cityInput.val().trim();
+   
+       getcoordinates();
+         return;
+         
+      }
+     
   }
 
+searchbtn.on("click", submitCity);
 
-
-  searchbtn.on("click", CityFormSubmit);
+  
  
